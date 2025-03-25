@@ -109,7 +109,7 @@ public class Table : ITableInternal
         throw new NotImplementedException();
     }
 
-    public List<dynamic> ExecuteQuery(Func<dynamic, bool>? predicate, string[]? columns, string? orderBy = null, string? groupBy = null,
+    public List<dynamic>? ExecuteQuery(Func<dynamic, bool>? predicate, string[]? columns, string? orderBy = null, string? groupBy = null,
         bool descending = false, int? limit = null)
     {
         throw new NotImplementedException();
