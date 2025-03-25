@@ -5,6 +5,8 @@ namespace InMemoryDatabase.Data;
 
 public class Database : IDatabaseInternal
 {
+    private readonly Dictionary<string, ITableInternal> _tables = new();
+    
     public void SaveData()
     {
         throw new NotImplementedException();
@@ -17,21 +19,68 @@ public class Database : IDatabaseInternal
 
     public void CreateTable(string tableName, Action<ITable> tableSetup)
     {
-        throw new NotImplementedException();
+        result = null;
+        Table table = new()
+        {
+            Name = tableName
+        };
+        
+        tableSetup(table);
+
+        if (!_tables.TryAdd(tableName, table))
+        {
+            return false;
+        }
+        
+        result = table;
+        return true;
+    } 
+    
+    public bool CreateTable(string tableName, Action<ITable> tableSetup)
+    {
+        Table table = new()
+        {
+            Name = tableName
+        };
+        
+        tableSetup(table);
+
+        return _tables.TryAdd(tableName, table);
     }
 
     public void Insert(string tableName, Action<dynamic> configure)
     {
-        throw new NotImplementedException();
+        bool tableExists = _tables.TryGetValue(tableName, out ITableInternal? table);
+       
+        if (!tableExists)
+        {
+            throw new ArgumentNullException($"Table {tableName} does not exists. Please use CreateTable method first.");
+        }
+
+        table!.Insert(configure);
     }
 
     public IQueryBuilder Select(string tableName, params string[] columns)
     {
-        throw new NotImplementedException();
+        bool tableExists = _tables.TryGetValue(tableName, out ITableInternal? table);
+        
+        if (!tableExists)
+        {
+            throw new ArgumentNullException($"Table {tableName} does not exists. Please use CreateTable method first.");
+        }
+
+        return table!.Select(columns);
     }
 
     ITableInternal IDatabaseInternal.GetTable(string tableName)
     {
-        throw new NotImplementedException();
+        bool tableExists = _tables.TryGetValue(tableName, out ITableInternal? table);
+        
+        if (!tableExists)
+        {
+            throw new ArgumentNullException($"Table {tableName} does not exists. Please use CreateTable method first.");
+        }
+
+        return table!;
     }
 }
