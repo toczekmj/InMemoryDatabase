@@ -6,16 +6,6 @@ namespace InMemoryDatabase.Data;
 public class Database : IDatabaseInternal
 {
     private readonly Dictionary<string, ITableInternal> _tables = new();
-    
-    public void SaveData()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void LoadData()
-    {
-        throw new NotImplementedException();
-    }
 
     public bool TryCreateTable(string tableName, Action<ITable> tableSetup, out ITable? result)
     {

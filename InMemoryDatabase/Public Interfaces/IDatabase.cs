@@ -2,8 +2,6 @@
 
 public interface IDatabase
 {
-    void SaveData();
-    void LoadData();
     bool TryCreateTable(string tableName, Action<ITable> tableSetup, out ITable? result);
     bool CreateTable(string tableName, Action<ITable> tableSetup);
     void Insert(string tableName, Action<dynamic> configure);
