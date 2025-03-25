@@ -1,6 +1,6 @@
 ﻿namespace InMemoryDatabase.Public_Interfaces;
 
-public interface IDatabase
+public interface IDatabase : IStateful
 {
     bool TryCreateTable(string tableName, Action<ITable> tableSetup, out ITable? result);
     bool CreateTable(string tableName, Action<ITable> tableSetup);
