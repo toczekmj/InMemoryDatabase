@@ -68,6 +68,11 @@ public class Table : ITableInternal
     {
         throw new NotImplementedException();
     }
+    
+    public void Insert(Action<List<dynamic>> configureList)
+    {
+        throw new NotImplementedException();
+    }
 
     public IQueryBuilder Select(params string[] columns)
     {
