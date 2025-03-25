@@ -17,7 +17,7 @@ public class Database : IDatabaseInternal
         throw new NotImplementedException();
     }
 
-    public void CreateTable(string tableName, Action<ITable> tableSetup)
+    public bool TryCreateTable(string tableName, Action<ITable> tableSetup, out ITable? result)
     {
         result = null;
         Table table = new()
@@ -58,6 +58,18 @@ public class Database : IDatabaseInternal
         }
 
         table!.Insert(configure);
+    }
+    
+    public void Insert(string tableName, Action<List<dynamic>> configureMultiple)
+    {
+        bool tableExists = _tables.TryGetValue(tableName, out ITableInternal? table);
+       
+        if (!tableExists)
+        {
+            throw new ArgumentNullException($"Table {tableName} does not exists. Please use CreateTable method first.");
+        }
+
+        table!.Insert(configureMultiple);
     }
 
     public IQueryBuilder Select(string tableName, params string[] columns)

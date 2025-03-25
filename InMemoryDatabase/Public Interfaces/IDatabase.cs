@@ -4,7 +4,9 @@ public interface IDatabase
 {
     void SaveData();
     void LoadData();
-    void CreateTable(string tableName, Action<ITable> tableSetup);
+    bool TryCreateTable(string tableName, Action<ITable> tableSetup, out ITable? result);
+    bool CreateTable(string tableName, Action<ITable> tableSetup);
     void Insert(string tableName, Action<dynamic> configure);
+    public void Insert(string tableName, Action<List<dynamic>> configureMultiple);
     IQueryBuilder Select(string tableName, params string[] columns);
 }
