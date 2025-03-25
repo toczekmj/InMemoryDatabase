@@ -1,5 +1,9 @@
 ﻿namespace InMemoryDatabase;
 
-public class Class1
+public static class Run
 {
+    public static void Main()
+    {
+        
+    }
 }

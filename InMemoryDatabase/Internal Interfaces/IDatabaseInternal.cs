@@ -1,6 +1,8 @@
-﻿namespace InMemoryDatabase.Internal_Interfaces;
+﻿using InMemoryDatabase.Public_Interfaces;
 
-public interface IDatabaseInternal
+namespace InMemoryDatabase.Internal_Interfaces;
+
+public interface IDatabaseInternal : IDatabase
 {
-    
+    internal ITableInternal GetTable(string tableName);
 }
