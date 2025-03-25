@@ -13,7 +13,7 @@ public class Table : ITableInternal
 
     public Dictionary<string, Type>? Schema
     {
-        get => _schema ?? new Dictionary<string, Type>();
+        get => _schema ??= new Dictionary<string, Type>();
         set
         {
             if (_schema is null && value is not null)
@@ -32,16 +32,16 @@ public class Table : ITableInternal
         }
     }
 
-    public List<ExpandoObject>? Rows
+    public List<ExpandoObject> Rows
     {
-        get => _rows ?? [];
+        get => _rows ??= [];
         set
         {
-            if(_rows is null && value is not null)
+            if(_rows is null)
             {
                 _rows = [..value];
             }
-            else if (_rows is not null && value is not null)
+            else if (_rows is not null)
             {
                 _rows.Clear();
                 _rows = [..value];
@@ -57,11 +57,11 @@ public class Table : ITableInternal
 
     public void SetupField(string fieldName, Type fieldType)
     {
-        if (_schema is null)
+        if (Schema is null)
         {
             throw new NoNullAllowedException("Schema cannot be null");
         }
-        _schema[fieldName] = fieldType;
+        Schema[fieldName] = fieldType;
     }
 
     public void Insert(Action<dynamic> configure)
