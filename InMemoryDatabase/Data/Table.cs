@@ -66,12 +66,42 @@ public class Table : ITableInternal
 
     public void Insert(Action<dynamic> configure)
     {
-        throw new NotImplementedException();
+        dynamic row = new ExpandoObject();
+        IDictionary<string, object> rowDict = (IDictionary<string, object>)row;
+        
+        configure(rowDict);
+
+        if(Schema is null)
+        {
+            throw new NoNullAllowedException("Schema is null. Please configure table before inserting data.");
+        }
+        
+        foreach (KeyValuePair<string, Type> field in Schema)
+        {
+            var isValue = rowDict.TryGetValue(field.Key, out object? expandoValue);
+            if (!isValue)
+            {
+                throw new ArgumentException($"Missing field '{field.Key}' in row");
+            }
+
+            var expectedValue = Schema.TryGetValue(field.Key, out Type? expectedType);
+            if(!expectedValue)
+            {
+                throw new ArgumentException($"Field '{field.Key}' is not defined in schema");
+            }
+            
+            if(expandoValue is not null && expandoValue.GetType() != expectedType)
+            {
+                throw new ArgumentException($"Field '{field.Key}' expected type '{expectedType}' but got '{expandoValue.GetType()}'");
+            }
+        }
+        
+        Rows.Add(row);
     }
     
-    public void Insert(Action<List<dynamic>> configureList)
+    public void Insert(List<Action<dynamic>> configureList)
     {
-        throw new NotImplementedException();
+        configureList.ForEach(entity => Insert(entity));
     }
 
     public IQueryBuilder Select(params string[] columns)

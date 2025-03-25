@@ -60,7 +60,7 @@ public class Database : IDatabaseInternal
         table!.Insert(configure);
     }
     
-    public void Insert(string tableName, Action<List<dynamic>> configureMultiple)
+    public void Insert(string tableName, List<Action<dynamic>> configureMultiple)
     {
         bool tableExists = _tables.TryGetValue(tableName, out ITableInternal? table);
        
