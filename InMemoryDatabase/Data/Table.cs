@@ -7,8 +7,8 @@ namespace InMemoryDatabase.Data;
 
 public class Table : ITableInternal
 {
-    private Dictionary<string, Type>? _schema;
     private List<ExpandoObject>? _rows;
+    private Dictionary<string, Type>? _schema;
     public string? Name { get; set; }
 
     public Dictionary<string, Type>? Schema
@@ -37,7 +37,7 @@ public class Table : ITableInternal
         get => _rows ??= [];
         set
         {
-            if(_rows is null)
+            if (_rows is null)
             {
                 _rows = [..value];
             }
@@ -52,15 +52,15 @@ public class Table : ITableInternal
             }
         }
     }
-    
-    public void SetupField<T>(string fieldName) => SetupField(fieldName, typeof(T));
+
+    public void SetupField<T>(string fieldName)
+    {
+        SetupField(fieldName, typeof(T));
+    }
 
     public void SetupField(string fieldName, Type fieldType)
     {
-        if (Schema is null)
-        {
-            throw new NoNullAllowedException("Schema cannot be null");
-        }
+        if (Schema is null) throw new NoNullAllowedException("Schema cannot be null");
         Schema[fieldName] = fieldType;
     }
 
@@ -68,37 +68,28 @@ public class Table : ITableInternal
     {
         dynamic row = new ExpandoObject();
         IDictionary<string, object> rowDict = (IDictionary<string, object>)row;
-        
+
         configure(rowDict);
 
-        if(Schema is null)
-        {
+        if (Schema is null)
             throw new NoNullAllowedException("Schema is null. Please configure table before inserting data.");
-        }
-        
+
         foreach (KeyValuePair<string, Type> field in Schema)
         {
             var isValue = rowDict.TryGetValue(field.Key, out object? expandoValue);
-            if (!isValue)
-            {
-                throw new ArgumentException($"Missing field '{field.Key}' in row");
-            }
+            if (!isValue) throw new ArgumentException($"Missing field '{field.Key}' in row");
 
             var expectedValue = Schema.TryGetValue(field.Key, out Type? expectedType);
-            if(!expectedValue)
-            {
-                throw new ArgumentException($"Field '{field.Key}' is not defined in schema");
-            }
-            
-            if(expandoValue is not null && expandoValue.GetType() != expectedType)
-            {
-                throw new ArgumentException($"Field '{field.Key}' expected type '{expectedType}' but got '{expandoValue.GetType()}'");
-            }
+            if (!expectedValue) throw new ArgumentException($"Field '{field.Key}' is not defined in schema");
+
+            if (expandoValue is not null && expandoValue.GetType() != expectedType)
+                throw new ArgumentException(
+                    $"Field '{field.Key}' expected type '{expectedType}' but got '{expandoValue.GetType()}'");
         }
-        
+
         Rows.Add(row);
     }
-    
+
     public void Insert(List<Action<dynamic>> configureList)
     {
         configureList.ForEach(entity => Insert(entity));
@@ -109,7 +100,8 @@ public class Table : ITableInternal
         throw new NotImplementedException();
     }
 
-    public List<dynamic>? ExecuteQuery(Func<dynamic, bool>? predicate, string[]? columns, string? orderBy = null, string? groupBy = null,
+    public List<dynamic>? ExecuteQuery(Func<dynamic, bool>? predicate, string[]? columns, string? orderBy = null,
+        string? groupBy = null,
         bool descending = false, int? limit = null)
     {
         throw new NotImplementedException();

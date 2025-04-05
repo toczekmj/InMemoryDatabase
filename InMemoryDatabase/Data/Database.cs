@@ -14,25 +14,22 @@ public class Database : IDatabaseInternal
         {
             Name = tableName
         };
-        
+
         tableSetup(table);
 
-        if (!_tables.TryAdd(tableName, table))
-        {
-            return false;
-        }
-        
+        if (!_tables.TryAdd(tableName, table)) return false;
+
         result = table;
         return true;
-    } 
-    
+    }
+
     public bool CreateTable(string tableName, Action<ITable> tableSetup)
     {
         Table table = new()
         {
             Name = tableName
         };
-        
+
         tableSetup(table);
 
         return _tables.TryAdd(tableName, table);
@@ -41,23 +38,19 @@ public class Database : IDatabaseInternal
     public void Insert(string tableName, Action<dynamic> configure)
     {
         bool tableExists = _tables.TryGetValue(tableName, out ITableInternal? table);
-       
+
         if (!tableExists)
-        {
             throw new ArgumentNullException($"Table {tableName} does not exists. Please use CreateTable method first.");
-        }
 
         table!.Insert(configure);
     }
-    
+
     public void Insert(string tableName, List<Action<dynamic>> configureMultiple)
     {
         bool tableExists = _tables.TryGetValue(tableName, out ITableInternal? table);
-       
+
         if (!tableExists)
-        {
             throw new ArgumentNullException($"Table {tableName} does not exists. Please use CreateTable method first.");
-        }
 
         table!.Insert(configureMultiple);
     }
@@ -65,11 +58,9 @@ public class Database : IDatabaseInternal
     public IQueryBuilder Select(string tableName, params string[] columns)
     {
         bool tableExists = _tables.TryGetValue(tableName, out ITableInternal? table);
-        
+
         if (!tableExists)
-        {
             throw new ArgumentNullException($"Table {tableName} does not exists. Please use CreateTable method first.");
-        }
 
         return table!.Select(columns);
     }
@@ -77,11 +68,9 @@ public class Database : IDatabaseInternal
     ITableInternal IDatabaseInternal.GetTable(string tableName)
     {
         bool tableExists = _tables.TryGetValue(tableName, out ITableInternal? table);
-        
+
         if (!tableExists)
-        {
             throw new ArgumentNullException($"Table {tableName} does not exists. Please use CreateTable method first.");
-        }
 
         return table!;
     }

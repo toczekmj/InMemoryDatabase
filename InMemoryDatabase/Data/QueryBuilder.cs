@@ -5,12 +5,12 @@ namespace InMemoryDatabase.Data;
 
 public class QueryBuilder : IQueryBuilder
 {
-    private readonly ITableInternal? _table;
     private readonly string[]? _columns;
-    private string? _orderBy;
-    private string? _groupBy;
+    private readonly ITableInternal? _table;
     private bool _descending;
+    private string? _groupBy;
     private int? _limit;
+    private string? _orderBy;
     private Func<dynamic, bool>? _wherePredicate;
 
     public QueryBuilder(ITable? table, string[] columns)
@@ -18,7 +18,7 @@ public class QueryBuilder : IQueryBuilder
         _table = table as ITableInternal;
         _columns = columns;
     }
-    
+
     public IQueryBuilder Where(Func<dynamic, bool> predicate)
     {
         _wherePredicate = predicate;
@@ -44,22 +44,38 @@ public class QueryBuilder : IQueryBuilder
         return this;
     }
 
-    public int? Count() => Execute()?.Count; 
+    public int? Count()
+    {
+        return Execute()?.Count;
+    }
 
-    public double? Sum(string column) => CalculateDouble(column, rows => rows.Sum());
+    public double? Sum(string column)
+    {
+        return CalculateDouble(column, rows => rows.Sum());
+    }
 
-    public double? Avg(string column) => CalculateDouble(column, rows => rows.Average());
+    public double? Avg(string column)
+    {
+        return CalculateDouble(column, rows => rows.Average());
+    }
 
-    public object? Min(string column) => CalculateObject(column, rows => rows.Min());
+    public object? Min(string column)
+    {
+        return CalculateObject(column, rows => rows.Min());
+    }
 
-    public object? Max(string column) => CalculateObject(column, rows => rows.Max());
+    public object? Max(string column)
+    {
+        return CalculateObject(column, rows => rows.Max());
+    }
 
     public List<dynamic>? Execute()
     {
         return _table?.ExecuteQuery(_wherePredicate, _columns, _orderBy, _groupBy, _descending, _limit);
     }
-    
+
     #region private methods
+
     private double? CalculateDouble(string column, Func<IEnumerable<double>, double> aggregation)
     {
         IEnumerable<double>? rows = Execute()?.Select(row =>
@@ -69,7 +85,7 @@ public class QueryBuilder : IQueryBuilder
                     $"Row is not a {typeof(Dictionary<string, object>)} please check your database configuration.");
             return Convert.ToDouble(rowDict[column]);
         });
-        
+
         return rows is null ? null : aggregation(rows);
     }
 
@@ -82,8 +98,9 @@ public class QueryBuilder : IQueryBuilder
                     $"Row is not a {typeof(Dictionary<string, object>)} please check your database configuration.");
             return rowDict[column];
         });
-        
+
         return rows is null ? null : aggregation(rows);
     }
+
     #endregion
 }

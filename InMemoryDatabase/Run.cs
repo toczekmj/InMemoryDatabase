@@ -4,6 +4,5 @@ public static class Run
 {
     public static void Main()
     {
-        
     }
 }

@@ -11,6 +11,7 @@ public interface IQueryBuilder
     double? Avg(string column);
     object? Min(string column);
     object? Max(string column);
+
     List<dynamic>? Execute();
     // TODO: Add Join method
     // TODO: Add Update method
