@@ -23,7 +23,7 @@ public class Database : IDatabaseInternal
         return true;
     }
 
-    public bool CreateTable(string tableName, Action<ITable> tableSetup)
+    public ITable? CreateTable(string tableName, Action<ITable> tableSetup)
     {
         Table table = new()
         {
@@ -32,7 +32,10 @@ public class Database : IDatabaseInternal
 
         tableSetup(table);
 
-        return _tables.TryAdd(tableName, table);
+        if (!TryCreateTable(tableName, tableSetup, out ITable? tableResult))
+            throw new Exception($"Could not create table {tableName}");
+
+        return tableResult;
     }
 
     public void Insert(string tableName, Action<dynamic> configure)
