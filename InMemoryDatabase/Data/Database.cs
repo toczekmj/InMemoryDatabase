@@ -40,7 +40,7 @@ public class Database : IDatabaseInternal
         bool tableExists = _tables.TryGetValue(tableName, out ITableInternal? table);
 
         if (!tableExists)
-            throw new ArgumentNullException($"Table {tableName} does not exists. Please use CreateTable method first.");
+            throw new ArgumentNullException($"Table {tableName} does not exist. Please use CreateTable method first.");
 
         table!.Insert(configure);
     }
